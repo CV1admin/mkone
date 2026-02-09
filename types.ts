@@ -16,7 +16,7 @@ export interface MKoneHypothesis {
   coherencePattern: string;
   structuralPattern: string;
   uncertaintyRating: number;
-  alternatePerspectives: string[];
+  alternatePerspectives: Array<{ text: string; weight: number }>;
 }
 
 export enum ViewState {
