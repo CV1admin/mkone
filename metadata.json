@@ -1,0 +1,7 @@
+{
+  "name": "MKone - Ethical Explorer",
+  "description": "An interactive digital interface for the MKone world-modeling framework, presenting its ethical README and conceptual explorations with high-fidelity visualizations.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
