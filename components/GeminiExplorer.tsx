@@ -28,7 +28,11 @@ import {
   MousePointer2,
   Settings2,
   Eraser,
-  Hash
+  Hash,
+  Wand2,
+  ChevronRight,
+  BrainCircuit,
+  Settings
 } from 'lucide-react';
 
 const CONCEPTUAL_ANCHORS = [
@@ -184,7 +188,8 @@ const GeminiExplorer: React.FC = () => {
   const [comparativeAnalysis, setComparativeAnalysis] = useState<string | null>(null);
   const [analyzingComparison, setAnalyzingComparison] = useState(false);
   const [activeAnchorCategory, setActiveAnchorCategory] = useState<string>('All');
-  const [synthesisDepth, setSynthesisDepth] = useState<number>(10000); // Thinking budget
+  const [synthesisDepth, setSynthesisDepth] = useState<number>(10000); // UI representation of thinking budget
+  const [polishing, setPolishing] = useState(false);
   
   const resultsEndRef = useRef<HTMLDivElement>(null);
 
@@ -204,7 +209,8 @@ const GeminiExplorer: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const hypothesis = await generateMKoneHypothesis(searchQuery);
+      // Passing synthesisDepth as thinkingBudget to the service
+      const hypothesis = await generateMKoneHypothesis(searchQuery, synthesisDepth);
       if (hypothesis) {
         setActiveResult(hypothesis);
         setResultsCache(prev => ({ ...prev, [searchQuery]: hypothesis }));
@@ -227,11 +233,35 @@ const GeminiExplorer: React.FC = () => {
     }
   };
 
+  const refinePromptWithAI = async () => {
+    if (!query.trim()) return;
+    setPolishing(true);
+    try {
+      // Create fresh instance right before call
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const prompt = `Refine this modeling query into a highly sophisticated Civilisation.one structural analysis prompt. Keep it concise but use multidisciplinary terminology from physics, complexity science, and information theory. Original: "${query}"`;
+      
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: prompt
+      });
+      // response.text is a property
+      if (response.text) {
+        setQuery(response.text.replace(/^["']|["']$/g, '').trim());
+      }
+    } catch (err) {
+      console.error("Polishing failed", err);
+    } finally {
+      setPolishing(false);
+    }
+  };
+
   const generateComparativeAnalysis = async () => {
     if (comparisonQueries.length < 2) return;
     setAnalyzingComparison(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+      // Create fresh instance right before call
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const dataToCompare = comparisonQueries.map(q => resultsCache[q]).filter(Boolean);
       const prompt = `Synthesize a meta-hypothesis by analyzing the relationship between these Civilisation.one domains: ${comparisonQueries.join(', ')}. 
       Focus on their shared isomorphic structures. Data: ${JSON.stringify(dataToCompare)}.`;
@@ -240,6 +270,7 @@ const GeminiExplorer: React.FC = () => {
         model: 'gemini-3-flash-preview',
         contents: prompt
       });
+      // Accessing property directly
       setComparativeAnalysis(response.text || "Unable to generate analysis.");
     } catch (err) {
       setComparativeAnalysis("Error generating comparative synthesis.");
@@ -360,19 +391,21 @@ const GeminiExplorer: React.FC = () => {
       {/* Prompt Lab Window */}
       {isLabOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md overflow-y-auto">
-            <div className="w-full max-w-5xl bg-slate-950 border border-slate-800 rounded-[2.5rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col md:flex-row h-full md:h-[85vh]">
+            <div className="w-full max-w-6xl bg-slate-950 border border-slate-800 rounded-[3rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col md:flex-row h-full md:h-[90vh]">
                 
-                {/* Left Sidebar: Anchors & Templates */}
+                {/* Left Sidebar: Tools & Anchors */}
                 <div className="w-full md:w-80 border-r border-slate-800 flex flex-col bg-slate-900/40">
-                    <div className="p-6 border-b border-slate-800 flex items-center gap-3">
-                        <Terminal className="text-blue-400 w-5 h-5" />
-                        <h3 className="font-bold text-sm uppercase tracking-[0.1em] text-slate-300">Synthesis Lab</h3>
+                    <div className="p-8 border-b border-slate-800 flex items-center gap-3">
+                        <div className="p-2 bg-blue-600 rounded-lg">
+                          <Terminal className="text-white w-5 h-5" />
+                        </div>
+                        <h3 className="font-bold text-lg uppercase tracking-widest text-white">Prompt Lab</h3>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4 space-y-6 no-scrollbar">
-                        <div className="space-y-3">
-                            <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-mono text-slate-500">
-                                <span>Templates</span>
+                    <div className="flex-1 overflow-y-auto p-6 space-y-8 no-scrollbar">
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em] font-mono text-slate-500 font-bold">
+                                <span>Core Templates</span>
                                 <BookOpen className="w-3 h-3" />
                             </div>
                             <div className="space-y-2">
@@ -380,18 +413,20 @@ const GeminiExplorer: React.FC = () => {
                                     <button 
                                         key={t.name}
                                         onClick={() => setQuery(t.template)}
-                                        className="w-full p-3 bg-slate-900/60 border border-slate-800 rounded-xl text-left hover:border-blue-500/40 hover:bg-blue-500/5 transition-all group"
+                                        className="w-full p-4 bg-slate-900/60 border border-slate-800 rounded-2xl text-left hover:border-blue-500/40 hover:bg-blue-500/5 transition-all group relative overflow-hidden"
                                     >
-                                        <div className="text-[11px] font-bold text-slate-300 group-hover:text-blue-400">{t.name}</div>
-                                        <div className="text-[9px] text-slate-600 mt-1">{t.type}</div>
+                                        <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        <div className="text-xs font-bold text-slate-100 group-hover:text-blue-400 relative z-10">{t.name}</div>
+                                        <div className="text-[10px] text-slate-500 mt-1 relative z-10">{t.type}</div>
+                                        <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-700 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                                     </button>
                                 ))}
                             </div>
                         </div>
 
-                        <div className="space-y-3">
-                            <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-mono text-slate-500">
-                                <span>Conceptual Anchors</span>
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em] font-mono text-slate-500 font-bold">
+                                <span>Anchors</span>
                                 <Filter className="w-3 h-3" />
                             </div>
                             <div className="flex gap-1 overflow-x-auto pb-2 no-scrollbar">
@@ -399,7 +434,7 @@ const GeminiExplorer: React.FC = () => {
                                     <button 
                                         key={cat}
                                         onClick={() => setActiveAnchorCategory(cat)}
-                                        className={`px-2 py-0.5 text-[8px] rounded uppercase font-bold shrink-0 transition-all ${activeAnchorCategory === cat ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-500'}`}
+                                        className={`px-3 py-1 text-[10px] rounded-full uppercase font-bold shrink-0 transition-all border ${activeAnchorCategory === cat ? 'bg-blue-600 border-blue-500 text-white shadow-lg' : 'bg-slate-800 border-slate-700 text-slate-500 hover:text-slate-300'}`}
                                     >
                                         {cat}
                                     </button>
@@ -410,11 +445,11 @@ const GeminiExplorer: React.FC = () => {
                                     <button 
                                         key={anchor.label}
                                         onClick={() => injectAnchor(anchor.label)}
-                                        className="p-3 bg-slate-900/60 border border-slate-800 rounded-xl text-left hover:border-blue-500/40 hover:bg-blue-500/5 transition-all group relative"
+                                        className="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl text-left hover:border-blue-500/40 hover:bg-blue-500/5 transition-all group relative"
                                     >
-                                        <div className="text-[11px] font-bold text-slate-300 group-hover:text-blue-400">{anchor.label}</div>
-                                        <div className="text-[9px] text-slate-600 truncate">{anchor.desc}</div>
-                                        <Plus className="absolute top-3 right-3 w-3 h-3 text-slate-700 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        <div className="text-xs font-bold text-slate-100 group-hover:text-blue-400">{anchor.label}</div>
+                                        <div className="text-[10px] text-slate-500 truncate">{anchor.desc}</div>
+                                        <Plus className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-700 opacity-0 group-hover:opacity-100 transition-opacity" />
                                     </button>
                                 ))}
                             </div>
@@ -423,67 +458,76 @@ const GeminiExplorer: React.FC = () => {
                 </div>
 
                 {/* Main Content: Query Builder */}
-                <div className="flex-1 flex flex-col p-6 md:p-10 space-y-8 bg-slate-950/20">
+                <div className="flex-1 flex flex-col p-8 md:p-12 space-y-10 bg-slate-950/20">
                     <div className="flex justify-between items-center">
                         <div className="space-y-1">
-                            <h3 className="font-bold text-2xl text-white">Modeling Sandbox</h3>
-                            <p className="text-slate-500 text-xs">Construct your multidimensional modeling query.</p>
+                            <h3 className="font-bold text-3xl text-white">Modeling Sandbox</h3>
+                            <p className="text-slate-500 text-sm">Construct multidimensional queries for civilisational synthesis.</p>
                         </div>
-                        <button onClick={() => setIsLabOpen(false)} className="p-2 hover:bg-slate-800 rounded-full transition-colors text-slate-500">
-                            <X className="w-6 h-6" />
+                        <button onClick={() => setIsLabOpen(false)} className="p-3 hover:bg-slate-800 rounded-full transition-colors text-slate-500">
+                            <X className="w-8 h-8" />
                         </button>
                     </div>
 
-                    <div className="relative flex-1 group">
-                        <div className="absolute top-4 left-4 z-10">
-                            <div className="flex items-center gap-2 px-3 py-1 bg-slate-900 border border-slate-800 rounded-full text-[10px] font-mono text-slate-500 uppercase tracking-widest">
-                                <Command className="w-3 h-3" /> Command Line
+                    <div className="relative flex-1 flex flex-col gap-6">
+                        <div className="flex-1 relative group">
+                            <div className="absolute top-6 left-6 z-10 flex items-center gap-2 px-4 py-1.5 bg-slate-950 border border-slate-800 rounded-full text-[10px] font-mono text-slate-400 uppercase tracking-widest">
+                                <Command className="w-3.5 h-3.5" /> Modeling Workspace
                             </div>
-                        </div>
-                        <textarea 
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            placeholder="Identify target domain..."
-                            className="w-full h-full bg-slate-900/30 border border-slate-800 rounded-[2rem] p-12 pt-16 text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/30 resize-none text-xl leading-relaxed placeholder:text-slate-800"
-                        />
-                        <div className="absolute bottom-6 right-6 flex items-center gap-4">
-                            <button onClick={() => setQuery('')} className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-bold text-slate-400 transition-all">
-                                <Eraser className="w-3.5 h-3.5" /> Clear
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-3">
-                            <div className="flex items-center justify-between">
-                                <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                                    <Settings2 className="w-3 h-3" /> Synthesis Depth
-                                </label>
-                                <span className="text-[10px] font-mono text-blue-400">{synthesisDepth} Tokens</span>
-                            </div>
-                            <input 
-                                type="range" 
-                                min="0" 
-                                max="24576" 
-                                step="1024"
-                                value={synthesisDepth} 
-                                onChange={(e) => setSynthesisDepth(parseInt(e.target.value))}
-                                className="w-full h-1.5 bg-slate-800 rounded-full appearance-none cursor-pointer accent-blue-500"
+                            <textarea 
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                placeholder="Target an isomorphism or domain..."
+                                className="w-full h-full bg-slate-900/40 border-2 border-slate-800 rounded-[2.5rem] p-16 pt-20 text-slate-100 focus:outline-none focus:border-blue-500/30 focus:ring-4 focus:ring-blue-500/5 resize-none text-2xl leading-relaxed placeholder:text-slate-800 font-medium"
                             />
-                            <div className="flex justify-between text-[8px] text-slate-600 font-mono uppercase">
-                                <span>Linear</span>
-                                <span>Deep Reasoning</span>
+                            <div className="absolute bottom-10 right-10 flex items-center gap-4">
+                                <button 
+                                  onClick={refinePromptWithAI} 
+                                  disabled={polishing || !query}
+                                  className={`flex items-center gap-2 px-6 py-3 bg-slate-950 border border-slate-800 hover:border-purple-500/40 hover:bg-purple-500/5 rounded-2xl text-xs font-bold transition-all ${polishing ? 'text-purple-400' : 'text-slate-400'}`}
+                                >
+                                    {polishing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
+                                    {polishing ? 'Polishing Architecture...' : 'Refine with AI'}
+                                </button>
+                                <button onClick={() => setQuery('')} className="flex items-center gap-2 px-6 py-3 bg-slate-950 border border-slate-800 hover:border-rose-500/40 hover:bg-rose-500/5 rounded-2xl text-xs font-bold text-slate-400 transition-all">
+                                    <Eraser className="w-4 h-4" /> Reset
+                                </button>
                             </div>
                         </div>
 
-                        <div className="flex gap-4">
-                            <button 
-                                onClick={() => performSearch(query)}
-                                disabled={loading || !query}
-                                className="flex-1 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 text-white rounded-2xl font-bold flex items-center justify-center gap-3 transition-all text-sm shadow-xl shadow-blue-900/20"
-                            >
-                                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Sparkles className="w-4 h-4" /> Run Modeling</>}
-                            </button>
+                        {/* Synthesis Settings */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-950/40 p-8 rounded-[2.5rem] border border-slate-800/60">
+                            <div className="col-span-2 space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                                        <Settings2 className="w-3.5 h-3.5" /> Analysis Entropy Depth
+                                    </label>
+                                    <span className="text-[10px] font-mono text-blue-400 font-bold">{synthesisDepth.toLocaleString()} Nodes</span>
+                                </div>
+                                <input 
+                                    type="range" 
+                                    min="0" 
+                                    max="24576" 
+                                    step="1024"
+                                    value={synthesisDepth} 
+                                    onChange={(e) => setSynthesisDepth(parseInt(e.target.value))}
+                                    className="w-full h-2 bg-slate-800 rounded-full appearance-none cursor-pointer accent-blue-500"
+                                />
+                                <div className="flex justify-between text-[8px] text-slate-600 font-mono uppercase tracking-widest">
+                                    <span>Conceptual</span>
+                                    <span>High Fidelity</span>
+                                </div>
+                            </div>
+
+                            <div className="flex items-end">
+                              <button 
+                                  onClick={() => performSearch(query)}
+                                  disabled={loading || !query}
+                                  className="w-full h-14 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 text-white rounded-2xl font-bold flex items-center justify-center gap-3 transition-all text-sm shadow-xl shadow-blue-900/20"
+                              >
+                                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><BrainCircuit className="w-5 h-5" /> Execute Synthesis</>}
+                              </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -555,21 +599,21 @@ const GeminiExplorer: React.FC = () => {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && performSearch(query)}
-                placeholder="Target Domain..."
+                placeholder="Identify structural domain..."
                 className="w-full bg-slate-950 border-2 border-slate-800/60 rounded-3xl px-8 py-6 pr-32 focus:outline-none focus:border-blue-500/40 focus:ring-4 focus:ring-blue-500/5 transition-all text-white text-lg placeholder:text-slate-700 font-medium"
                 />
                 <button 
                     type="button"
                     onClick={() => setIsLabOpen(true)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 px-4 py-3 bg-slate-900 hover:bg-blue-600/10 hover:text-blue-400 border border-slate-800 hover:border-blue-500/30 rounded-2xl transition-all text-slate-500 font-mono text-xs uppercase font-bold tracking-widest"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 px-5 py-3.5 bg-slate-900 hover:bg-blue-600/10 hover:text-blue-400 border border-slate-800 hover:border-blue-500/30 rounded-2xl transition-all text-slate-500 font-mono text-[10px] uppercase font-bold tracking-widest shadow-inner group"
                 >
-                    <Terminal className="w-4 h-4" /> Lab
+                    <Terminal className="w-4 h-4 group-hover:scale-110 transition-transform" /> Prompt Lab
                 </button>
             </div>
             <button
             onClick={() => performSearch(query)}
             disabled={loading || !query}
-            className="bg-white hover:bg-slate-100 disabled:bg-slate-800 disabled:text-slate-600 text-slate-950 font-bold px-10 py-6 rounded-3xl flex items-center gap-3 transition-all min-w-[200px] justify-center text-lg active:scale-95"
+            className="bg-white hover:bg-slate-100 disabled:bg-slate-800 disabled:text-slate-600 text-slate-950 font-bold px-10 py-6 rounded-3xl flex items-center gap-3 transition-all min-w-[220px] justify-center text-lg active:scale-95 shadow-xl shadow-black/40"
             >
             {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Zap className="w-5 h-5 fill-current" /> Synthesize</>}
             </button>

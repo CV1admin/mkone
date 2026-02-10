@@ -6,6 +6,7 @@ import BackgroundSimulation from './components/BackgroundSimulation';
 import GeminiExplorer from './components/GeminiExplorer';
 import VerificationLayer from './components/VerificationLayer';
 import Statements from './components/Statements';
+import VotePage from './components/VotePage';
 import { 
   Menu, 
   X, 
@@ -17,7 +18,8 @@ import {
   Orbit,
   Cpu,
   Layers,
-  FileText
+  FileText,
+  Vote
 } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -59,6 +61,7 @@ const App: React.FC = () => {
             <NavItem state={ViewState.STATEMENTS} label="Statements" />
             <NavItem state={ViewState.PRINCIPLES} label="Principles" />
             <NavItem state={ViewState.RISKS} label="Risks" />
+            <NavItem state={ViewState.VOTE} label="Vote" />
             <NavItem state={ViewState.EXPLORER} label="Explorer" />
             <a 
               href="https://github.com" 
@@ -84,13 +87,14 @@ const App: React.FC = () => {
             <NavItem state={ViewState.STATEMENTS} label="Statements" />
             <NavItem state={ViewState.PRINCIPLES} label="Principles" />
             <NavItem state={ViewState.RISKS} label="Risks" />
+            <NavItem state={ViewState.VOTE} label="Vote" />
             <NavItem state={ViewState.EXPLORER} label="Explorer" />
           </div>
         )}
       </nav>
 
       {/* Main Content Area */}
-      <main className={`flex-1 z-10 relative ${view === ViewState.CIVILISATION || view === ViewState.STATEMENTS ? 'pt-4' : 'pt-12'} pb-24 px-4 max-w-7xl mx-auto w-full`}>
+      <main className={`flex-1 z-10 relative ${view === ViewState.CIVILISATION || view === ViewState.STATEMENTS || view === ViewState.VOTE ? 'pt-4' : 'pt-12'} pb-24 px-4 max-w-7xl mx-auto w-full`}>
         {view === ViewState.HOME && (
           <div className="space-y-24 animate-in fade-in duration-700">
             {/* Hero */}
@@ -110,10 +114,10 @@ const App: React.FC = () => {
                   Launch Explorer <ChevronRight className="group-hover:translate-x-1 transition-transform" />
                 </button>
                 <button 
-                   onClick={() => setView(ViewState.STATEMENTS)}
+                   onClick={() => setView(ViewState.VOTE)}
                   className="px-8 py-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-full transition-all flex items-center gap-2"
                 >
-                  <FileText className="w-4 h-4 text-blue-400" /> View Statements
+                  <Vote className="w-4 h-4 text-emerald-400" /> Enter Governance
                 </button>
               </div>
             </section>
@@ -176,6 +180,7 @@ const App: React.FC = () => {
 
         {view === ViewState.CIVILISATION && <VerificationLayer />}
         {view === ViewState.STATEMENTS && <Statements />}
+        {view === ViewState.VOTE && <VotePage />}
 
         {view === ViewState.PRINCIPLES && (
           <div className="max-w-5xl mx-auto space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-500">

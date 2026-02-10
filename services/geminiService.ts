@@ -2,10 +2,10 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { MKoneHypothesis } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-
-export const generateMKoneHypothesis = async (query: string): Promise<MKoneHypothesis | null> => {
+// The GoogleGenAI instance should be created inside the function to ensure the latest API key is used.
+export const generateMKoneHypothesis = async (query: string, thinkingBudget?: number): Promise<MKoneHypothesis | null> => {
   try {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: `Generate a theoretical hypothesis within the Civilisation.one world-modeling framework for the following domain: ${query}. 
@@ -35,10 +35,13 @@ export const generateMKoneHypothesis = async (query: string): Promise<MKoneHypot
             }
           },
           required: ["domain", "coherencePattern", "structuralPattern", "uncertaintyRating", "alternatePerspectives"]
-        }
+        },
+        // thinkingBudget is only available for Gemini 3 and 2.5 series models.
+        thinkingConfig: thinkingBudget !== undefined ? { thinkingBudget } : undefined,
       }
     });
 
+    // Accessing response.text directly as it is a property.
     const text = response.text;
     if (!text) return null;
     return JSON.parse(text.trim()) as MKoneHypothesis;
