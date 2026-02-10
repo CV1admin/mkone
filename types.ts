@@ -24,5 +24,6 @@ export enum ViewState {
   MANIFESTO = 'manifesto',
   PRINCIPLES = 'principles',
   EXPLORER = 'explorer',
-  RISKS = 'risks'
+  RISKS = 'risks',
+  CIVILISATION = 'civilisation'
 }

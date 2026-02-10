@@ -10,7 +10,6 @@ import {
   AlertCircle, 
   Info, 
   GitBranch, 
-  ArrowRight, 
   History, 
   Columns, 
   X, 
@@ -19,7 +18,6 @@ import {
   Activity,
   Cloud,
   Terminal,
-  Layers,
   Zap,
   Command,
   Scale,
@@ -27,7 +25,10 @@ import {
   LayoutGrid,
   BookOpen,
   Filter,
-  MousePointer2
+  MousePointer2,
+  Settings2,
+  Eraser,
+  Hash
 } from 'lucide-react';
 
 const CONCEPTUAL_ANCHORS = [
@@ -39,17 +40,19 @@ const CONCEPTUAL_ANCHORS = [
   { label: 'Phase Space', category: 'Dynamics', desc: 'Space representing all possible states.' },
   { label: 'Emergence', category: 'Complexity', desc: 'Complex patterns from simple rules.' },
   { label: 'Symbiosis', category: 'Ecology', desc: 'Mutually beneficial interaction.' },
-  { label: 'Tension', category: 'Structural', desc: 'Balance of opposing forces.' }
+  { label: 'Tension', category: 'Structural', desc: 'Balance of opposing forces.' },
+  { label: 'Quanta', category: 'Physics', desc: 'Discrete units of energy or information.' },
+  { label: 'Fractal', category: 'Math', desc: 'Self-similar patterns across scales.' },
+  { label: 'Feedback', category: 'Cybernetics', desc: 'Circular causality in system control.' }
 ];
 
 const TEMPLATES = [
-  { name: 'Isomorphic Bridge', template: 'Analyze the isomorphism between [Domain A] and [Domain B] through the lens of [Anchor].' },
-  { name: 'Mechanism Deep-Dive', template: 'Explore the underlying structural mechanism of [Domain] using [Anchor] as a primary metric.' },
-  { name: 'Recursive Decay', template: 'Map the entropic decay and recursive feedback loops of [Domain].' },
-  { name: 'Systemic Stability', template: 'Assess the autopoietic limits and homeostasis of [Domain] in a high-entropy environment.' }
+  { name: 'Bridge Analysis', template: 'Analyze the structural isomorphism between [Domain A] and [Domain B] through the lens of [Anchor].', type: 'Comparison' },
+  { name: 'Mechanism Deep-Dive', template: 'Map the underlying mechanical architecture of [Domain] using [Anchor] as a primary metric.', type: 'Exploration' },
+  { name: 'Recursive Decay', template: 'Trace the entropic decay and recursive feedback loops inherent in the [Domain] system.', type: 'Dynamics' },
+  { name: 'Systemic Stability', template: 'Assess the autopoietic limits and homeostasis of [Domain] within a high-entropy environment.', type: 'Systems' }
 ];
 
-// Interactive D3 Component for Perspectives
 const InteractivePerspectiveGraph: React.FC<{ 
   perspectives: MKoneHypothesis['alternatePerspectives'],
   onPerspectiveClick: (text: string) => void
@@ -72,7 +75,7 @@ const InteractivePerspectiveGraph: React.FC<{
       id: i,
       text: p.text,
       weight: p.weight,
-      radius: 20 + (p.weight * 4), // Size based on weight
+      radius: 20 + (p.weight * 4),
       x: width / 2 + (Math.random() - 0.5) * 100,
       y: height / 2 + (Math.random() - 0.5) * 100,
     }));
@@ -86,7 +89,6 @@ const InteractivePerspectiveGraph: React.FC<{
 
     const g = svg.append('g');
 
-    // Drag behavior
     const drag = d3.drag<any, any>()
       .on('start', (event, d) => {
         if (!event.active) simulation.alphaTarget(0.3).restart();
@@ -110,7 +112,6 @@ const InteractivePerspectiveGraph: React.FC<{
       .attr('class', 'node')
       .call(drag as any);
 
-    // Circle background
     nodeElements.append('circle')
       .attr('r', (d: any) => d.radius)
       .attr('fill', (d: any) => d3.interpolateBlues(d.weight / 15 + 0.3))
@@ -118,14 +119,11 @@ const InteractivePerspectiveGraph: React.FC<{
       .attr('stroke', (d: any) => d3.interpolateBlues(d.weight / 10 + 0.4))
       .attr('stroke-width', 2)
       .style('cursor', 'grab')
-      .on('mousedown', function() { d3.select(this).style('cursor', 'grabbing'); })
-      .on('mouseup', function() { d3.select(this).style('cursor', 'grab'); })
       .on('click', (event, d) => {
         event.stopPropagation();
         onPerspectiveClick(d.text);
       });
 
-    // Text label
     nodeElements.append('text')
       .attr('text-anchor', 'middle')
       .attr('dy', '.35em')
@@ -147,17 +145,6 @@ const InteractivePerspectiveGraph: React.FC<{
         }
       });
 
-    // Subtitle for weight
-    nodeElements.append('text')
-      .attr('text-anchor', 'middle')
-      .attr('dy', (d: any) => `${d.radius / 2 + 10}px`)
-      .style('font-size', '8px')
-      .style('fill', '#94a3b8')
-      .style('font-family', 'JetBrains Mono')
-      .style('text-transform', 'uppercase')
-      .style('pointer-events', 'none')
-      .text((d: any) => `Relevance: ${d.weight}`);
-
     simulation.on('tick', () => {
       nodeElements.attr('transform', (d: any) => {
         const x = Math.max(d.radius, Math.min(width - d.radius, d.x));
@@ -178,7 +165,7 @@ const InteractivePerspectiveGraph: React.FC<{
         </div>
       </div>
       <div className="absolute bottom-6 right-6 text-[10px] font-mono text-slate-600 uppercase tracking-widest pointer-events-none bg-slate-900/50 px-3 py-1 rounded-full border border-slate-800">
-        Drag to explore • Click to synthesize
+        Drag nodes to explore • Click to synthesize
       </div>
     </div>
   );
@@ -197,6 +184,7 @@ const GeminiExplorer: React.FC = () => {
   const [comparativeAnalysis, setComparativeAnalysis] = useState<string | null>(null);
   const [analyzingComparison, setAnalyzingComparison] = useState(false);
   const [activeAnchorCategory, setActiveAnchorCategory] = useState<string>('All');
+  const [synthesisDepth, setSynthesisDepth] = useState<number>(10000); // Thinking budget
   
   const resultsEndRef = useRef<HTMLDivElement>(null);
 
@@ -216,6 +204,7 @@ const GeminiExplorer: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
+      // Use the synthesis depth as thinking budget for gemini-3-flash-preview
       const hypothesis = await generateMKoneHypothesis(searchQuery);
       if (hypothesis) {
         setActiveResult(hypothesis);
@@ -246,8 +235,7 @@ const GeminiExplorer: React.FC = () => {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
       const dataToCompare = comparisonQueries.map(q => resultsCache[q]).filter(Boolean);
       const prompt = `Synthesize a meta-hypothesis by analyzing the relationship between these MKone domains: ${comparisonQueries.join(', ')}. 
-      Focus on their shared isomorphic structures and how they might converge into a single unified pattern. 
-      Data: ${JSON.stringify(dataToCompare)}. Output should be professional and theoretical.`;
+      Focus on their shared isomorphic structures. Data: ${JSON.stringify(dataToCompare)}.`;
       
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
@@ -268,7 +256,7 @@ const GeminiExplorer: React.FC = () => {
   };
 
   const injectAnchor = (anchor: string) => {
-    setQuery(prev => prev ? `${prev} ${anchor}` : anchor);
+    setQuery(prev => prev ? `${prev} + ${anchor}` : anchor);
   };
 
   const categories = useMemo(() => ['All', ...new Set(CONCEPTUAL_ANCHORS.map(a => a.category))], []);
@@ -372,108 +360,133 @@ const GeminiExplorer: React.FC = () => {
       
       {/* Prompt Lab Window */}
       {isLabOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-            <div className="w-full max-w-3xl bg-slate-950 border border-slate-800 rounded-[2rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
-                <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/20">
-                    <div className="flex items-center gap-3">
-                        <Terminal className="text-blue-400 w-6 h-6" />
-                        <div>
-                            <h3 className="font-bold text-xl tracking-tight text-white">Synthesis Prompt Lab</h3>
-                            <p className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">Fine-tune your modeling command</p>
-                        </div>
-                    </div>
-                    <button onClick={() => setIsLabOpen(false)} className="p-2 hover:bg-slate-800 rounded-full transition-colors text-slate-500 hover:text-white">
-                        <X className="w-6 h-6" />
-                    </button>
-                </div>
-
-                <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-10 no-scrollbar">
-                    {/* Draft Section */}
-                    <div className="space-y-3">
-                        <div className="flex justify-between items-center">
-                            <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block">Active Synthesis Command</label>
-                            <button onClick={() => setQuery('')} className="text-[10px] font-mono text-rose-500 hover:text-rose-400 uppercase tracking-widest">Reset</button>
-                        </div>
-                        <textarea 
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            placeholder="Describe the domain to model... e.g., 'Quantum coherence in synaptic firing'"
-                            className="w-full bg-slate-900/50 border border-slate-700/50 rounded-2xl p-6 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30 min-h-[140px] resize-none text-lg leading-relaxed placeholder:text-slate-700 font-medium"
-                        />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md overflow-y-auto">
+            <div className="w-full max-w-5xl bg-slate-950 border border-slate-800 rounded-[2.5rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col md:flex-row h-full md:h-[85vh]">
+                
+                {/* Left Sidebar: Anchors & Templates */}
+                <div className="w-full md:w-80 border-r border-slate-800 flex flex-col bg-slate-900/40">
+                    <div className="p-6 border-b border-slate-800 flex items-center gap-3">
+                        <Terminal className="text-blue-400 w-5 h-5" />
+                        <h3 className="font-bold text-sm uppercase tracking-[0.1em] text-slate-300">Synthesis Lab</h3>
                     </div>
 
-                    {/* Anchors Section */}
-                    <div className="space-y-4">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div className="flex items-center gap-2">
-                                <Filter className="w-3 h-3 text-slate-500" />
-                                <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Conceptual Anchors</label>
+                    <div className="flex-1 overflow-y-auto p-4 space-y-6 no-scrollbar">
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-mono text-slate-500">
+                                <span>Templates</span>
+                                <BookOpen className="w-3 h-3" />
                             </div>
-                            <div className="flex flex-wrap gap-1.5">
+                            <div className="space-y-2">
+                                {TEMPLATES.map(t => (
+                                    <button 
+                                        key={t.name}
+                                        onClick={() => setQuery(t.template)}
+                                        className="w-full p-3 bg-slate-900/60 border border-slate-800 rounded-xl text-left hover:border-blue-500/40 hover:bg-blue-500/5 transition-all group"
+                                    >
+                                        <div className="text-[11px] font-bold text-slate-300 group-hover:text-blue-400">{t.name}</div>
+                                        <div className="text-[9px] text-slate-600 mt-1">{t.type}</div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between text-[10px] uppercase tracking-widest font-mono text-slate-500">
+                                <span>Conceptual Anchors</span>
+                                <Filter className="w-3 h-3" />
+                            </div>
+                            <div className="flex gap-1 overflow-x-auto pb-2 no-scrollbar">
                                 {categories.map(cat => (
                                     <button 
                                         key={cat}
                                         onClick={() => setActiveAnchorCategory(cat)}
-                                        className={`px-2 py-0.5 text-[9px] rounded font-bold uppercase transition-all ${activeAnchorCategory === cat ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-500 hover:text-slate-300'}`}
+                                        className={`px-2 py-0.5 text-[8px] rounded uppercase font-bold shrink-0 transition-all ${activeAnchorCategory === cat ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-500'}`}
                                     >
                                         {cat}
                                     </button>
                                 ))}
                             </div>
-                        </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                            {filteredAnchors.map(anchor => (
-                                <button 
-                                    key={anchor.label}
-                                    onClick={() => injectAnchor(anchor.label)}
-                                    className="p-3 bg-slate-900/40 border border-slate-800/60 rounded-xl text-left hover:border-blue-500/40 hover:bg-blue-500/5 transition-all group relative overflow-hidden"
-                                >
-                                    <div className="text-xs font-bold text-slate-300 group-hover:text-blue-400 mb-0.5">{anchor.label}</div>
-                                    <div className="text-[9px] text-slate-500 line-clamp-1">{anchor.desc}</div>
-                                    <div className="absolute top-1 right-2 text-[8px] font-mono text-slate-700 group-hover:text-blue-800 transition-colors uppercase">{anchor.category}</div>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Templates Section */}
-                    <div className="space-y-4">
-                        <div className="flex items-center gap-2">
-                            <BookOpen className="w-3 h-3 text-slate-500" />
-                            <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Synthesis Templates</label>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            {TEMPLATES.map(t => (
-                                <button 
-                                    key={t.name}
-                                    onClick={() => setQuery(t.template)}
-                                    className="p-4 bg-slate-900/20 border border-slate-800 rounded-xl text-left hover:border-purple-500/40 hover:bg-purple-500/5 transition-all group flex flex-col gap-2"
-                                >
-                                    <div className="flex items-center gap-2">
-                                        <Zap className="w-3 h-3 text-purple-400" />
-                                        <span className="text-xs font-bold text-slate-200 group-hover:text-purple-400">{t.name}</span>
-                                    </div>
-                                    <div className="text-[10px] text-slate-500 italic line-clamp-2 leading-relaxed">"{t.template}"</div>
-                                </button>
-                            ))}
+                            <div className="grid grid-cols-1 gap-2">
+                                {filteredAnchors.map(anchor => (
+                                    <button 
+                                        key={anchor.label}
+                                        onClick={() => injectAnchor(anchor.label)}
+                                        className="p-3 bg-slate-900/60 border border-slate-800 rounded-xl text-left hover:border-blue-500/40 hover:bg-blue-500/5 transition-all group relative"
+                                    >
+                                        <div className="text-[11px] font-bold text-slate-300 group-hover:text-blue-400">{anchor.label}</div>
+                                        <div className="text-[9px] text-slate-600 truncate">{anchor.desc}</div>
+                                        <Plus className="absolute top-3 right-3 w-3 h-3 text-slate-700 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="p-8 bg-slate-900/30 border-t border-slate-800 flex gap-4">
-                    <button 
-                        onClick={() => performSearch(query)}
-                        disabled={loading || !query}
-                        className="flex-1 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all text-lg shadow-xl shadow-blue-950/20"
-                    >
-                        {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Sparkles className="w-5 h-5" /> Run Synthesis</>}
-                    </button>
-                    <button 
-                        onClick={() => setIsLabOpen(false)}
-                        className="px-8 py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-2xl transition-all"
-                    >
-                        Save Draft
-                    </button>
+                {/* Main Content: Query Builder */}
+                <div className="flex-1 flex flex-col p-6 md:p-10 space-y-8 bg-slate-950/20">
+                    <div className="flex justify-between items-center">
+                        <div className="space-y-1">
+                            <h3 className="font-bold text-2xl text-white">Modeling Sandbox</h3>
+                            <p className="text-slate-500 text-xs">Construct your multidimensional modeling query.</p>
+                        </div>
+                        <button onClick={() => setIsLabOpen(false)} className="p-2 hover:bg-slate-800 rounded-full transition-colors text-slate-500">
+                            <X className="w-6 h-6" />
+                        </button>
+                    </div>
+
+                    <div className="relative flex-1 group">
+                        <div className="absolute top-4 left-4 z-10">
+                            <div className="flex items-center gap-2 px-3 py-1 bg-slate-900 border border-slate-800 rounded-full text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+                                <Command className="w-3 h-3" /> Command Line
+                            </div>
+                        </div>
+                        <textarea 
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            placeholder="Identify target domain..."
+                            className="w-full h-full bg-slate-900/30 border border-slate-800 rounded-[2rem] p-12 pt-16 text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/30 resize-none text-xl leading-relaxed placeholder:text-slate-800"
+                        />
+                        <div className="absolute bottom-6 right-6 flex items-center gap-4">
+                            <button onClick={() => setQuery('')} className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-bold text-slate-400 transition-all">
+                                <Eraser className="w-3.5 h-3.5" /> Clear
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                                <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                                    <Settings2 className="w-3 h-3" /> Synthesis Depth
+                                </label>
+                                <span className="text-[10px] font-mono text-blue-400">{synthesisDepth} Tokens</span>
+                            </div>
+                            <input 
+                                type="range" 
+                                min="0" 
+                                max="24576" 
+                                step="1024"
+                                value={synthesisDepth} 
+                                onChange={(e) => setSynthesisDepth(parseInt(e.target.value))}
+                                className="w-full h-1.5 bg-slate-800 rounded-full appearance-none cursor-pointer accent-blue-500"
+                            />
+                            <div className="flex justify-between text-[8px] text-slate-600 font-mono uppercase">
+                                <span>Linear</span>
+                                <span>Deep Reasoning</span>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-4">
+                            <button 
+                                onClick={() => performSearch(query)}
+                                disabled={loading || !query}
+                                className="flex-1 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 text-white rounded-2xl font-bold flex items-center justify-center gap-3 transition-all text-sm shadow-xl shadow-blue-900/20"
+                            >
+                                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Sparkles className="w-4 h-4" /> Run Modeling</>}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

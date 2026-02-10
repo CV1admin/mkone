@@ -4,6 +4,7 @@ import { ViewState } from './types';
 import { PRINCIPLES, RISKS, ICON_MAP } from './constants';
 import BackgroundSimulation from './components/BackgroundSimulation';
 import GeminiExplorer from './components/GeminiExplorer';
+import VerificationLayer from './components/VerificationLayer';
 import { 
   Menu, 
   X, 
@@ -13,7 +14,8 @@ import {
   ArrowRight,
   Lightbulb,
   Orbit,
-  Cpu
+  Cpu,
+  Layers
 } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -51,6 +53,7 @@ const App: React.FC = () => {
 
           <div className="hidden md:flex items-center gap-4">
             <NavItem state={ViewState.HOME} label="Home" />
+            <NavItem state={ViewState.CIVILISATION} label="Civilisation One" />
             <NavItem state={ViewState.PRINCIPLES} label="Principles" />
             <NavItem state={ViewState.RISKS} label="Risks" />
             <NavItem state={ViewState.EXPLORER} label="Explorer" />
@@ -74,6 +77,7 @@ const App: React.FC = () => {
         {mobileMenuOpen && (
           <div className="md:hidden bg-slate-950 border-b border-slate-800 py-4 flex flex-col items-center gap-2">
             <NavItem state={ViewState.HOME} label="Home" />
+            <NavItem state={ViewState.CIVILISATION} label="Civilisation One" />
             <NavItem state={ViewState.PRINCIPLES} label="Principles" />
             <NavItem state={ViewState.RISKS} label="Risks" />
             <NavItem state={ViewState.EXPLORER} label="Explorer" />
@@ -82,12 +86,12 @@ const App: React.FC = () => {
       </nav>
 
       {/* Main Content Area */}
-      <main className="flex-1 z-10 relative pt-12 pb-24 px-4 max-w-7xl mx-auto w-full">
+      <main className={`flex-1 z-10 relative ${view === ViewState.CIVILISATION ? 'pt-4' : 'pt-12'} pb-24 px-4 max-w-7xl mx-auto w-full`}>
         {view === ViewState.HOME && (
           <div className="space-y-24 animate-in fade-in duration-700">
             {/* Hero */}
             <section className="text-center max-w-4xl mx-auto">
-              <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight text-white">
                 A World-Modeling <br />
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">Framework</span>
               </h1>
@@ -98,15 +102,15 @@ const App: React.FC = () => {
               <div className="flex flex-wrap justify-center gap-4">
                 <button 
                   onClick={() => setView(ViewState.EXPLORER)}
-                  className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-full transition-all flex items-center gap-2 group"
+                  className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-full transition-all flex items-center gap-2 group shadow-xl shadow-blue-900/20"
                 >
                   Launch Explorer <ChevronRight className="group-hover:translate-x-1 transition-transform" />
                 </button>
                 <button 
-                   onClick={() => setView(ViewState.PRINCIPLES)}
-                  className="px-8 py-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-full transition-all"
+                   onClick={() => setView(ViewState.CIVILISATION)}
+                  className="px-8 py-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-full transition-all flex items-center gap-2"
                 >
-                  Ethical Manifesto
+                  <Layers className="w-4 h-4 text-blue-400" /> Verification Layer
                 </button>
               </div>
             </section>
@@ -120,9 +124,9 @@ const App: React.FC = () => {
               ].map((item, idx) => {
                 const Icon = item.icon;
                 return (
-                  <div key={idx} className="p-8 bg-slate-900/40 rounded-3xl border border-slate-800 hover:border-slate-700 transition-all">
-                    <div className="mb-4 text-blue-400"><Icon className="w-8 h-8" /></div>
-                    <h3 className="text-xl font-bold mb-3">{item.title}</h3>
+                  <div key={idx} className="p-8 bg-slate-900/40 rounded-3xl border border-slate-800 hover:border-slate-700 transition-all group">
+                    <div className="mb-4 text-blue-400 group-hover:scale-110 transition-transform"><Icon className="w-8 h-8" /></div>
+                    <h3 className="text-xl font-bold mb-3 text-slate-100">{item.title}</h3>
                     <p className="text-slate-400 leading-relaxed">{item.desc}</p>
                   </div>
                 );
@@ -167,10 +171,12 @@ const App: React.FC = () => {
           </div>
         )}
 
+        {view === ViewState.CIVILISATION && <VerificationLayer />}
+
         {view === ViewState.PRINCIPLES && (
           <div className="max-w-5xl mx-auto space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-500">
              <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">Ethical Principles</h1>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">Ethical Principles</h1>
               <p className="text-slate-400 max-w-2xl mx-auto">MKone responsibility scales not with deployment size, but with interpretive influence.</p>
             </div>
 
@@ -178,11 +184,11 @@ const App: React.FC = () => {
               {PRINCIPLES.map((p) => {
                 const Icon = ICON_MAP[p.icon];
                 return (
-                  <div key={p.id} className="p-8 bg-slate-900/50 backdrop-blur rounded-3xl border border-slate-800 hover:scale-[1.02] transition-transform flex flex-col">
-                    <div className="mb-6 p-3 bg-slate-950 rounded-xl w-fit">
+                  <div key={p.id} className="p-8 bg-slate-900/50 backdrop-blur rounded-3xl border border-slate-800 hover:scale-[1.02] transition-transform flex flex-col group">
+                    <div className="mb-6 p-3 bg-slate-950 rounded-xl w-fit group-hover:bg-blue-600/10 transition-colors">
                       <Icon className="w-6 h-6 text-blue-400" />
                     </div>
-                    <h3 className="text-xl font-bold mb-4">{p.title}</h3>
+                    <h3 className="text-xl font-bold mb-4 text-slate-100">{p.title}</h3>
                     <p className="text-slate-400 leading-relaxed text-sm flex-1">{p.description}</p>
                   </div>
                 );
@@ -190,12 +196,12 @@ const App: React.FC = () => {
             </div>
 
             <div className="bg-slate-950/80 p-8 rounded-3xl border border-slate-800">
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+              <h2 className="text-2xl font-bold mb-6 flex items-center gap-3 text-slate-100">
                 <ICON_MAP.ShieldCheck className="w-6 h-6 text-emerald-400" /> Commitments
               </h2>
               <div className="grid md:grid-cols-2 gap-12">
                 <div>
-                  <h4 className="text-blue-400 font-mono text-xs uppercase mb-4">Maintainer Commitments</h4>
+                  <h4 className="text-blue-400 font-mono text-xs uppercase mb-4 tracking-widest">Maintainer Commitments</h4>
                   <ul className="space-y-3 text-slate-400 text-sm italic">
                     <li>— Documenting assumptions and revisions</li>
                     <li>— Publishing failures and contradictions</li>
@@ -204,7 +210,7 @@ const App: React.FC = () => {
                   </ul>
                 </div>
                 <div>
-                  <h4 className="text-purple-400 font-mono text-xs uppercase mb-4">User Commitments</h4>
+                  <h4 className="text-purple-400 font-mono text-xs uppercase mb-4 tracking-widest">User Commitments</h4>
                   <ul className="space-y-3 text-slate-400 text-sm italic">
                     <li>— Understanding operational limitations</li>
                     <li>— Avoiding overstated or dogmatic claims</li>
@@ -220,7 +226,7 @@ const App: React.FC = () => {
         {view === ViewState.RISKS && (
           <div className="max-w-4xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-500">
             <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4 flex items-center justify-center gap-4">
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 flex items-center justify-center gap-4 text-white">
                 <ShieldAlert className="text-rose-500 w-12 h-12" />
                 Operational Risks
               </h1>
@@ -237,7 +243,7 @@ const App: React.FC = () => {
             </div>
 
             <div className="p-8 bg-rose-500/5 rounded-3xl border border-rose-500/20 text-center">
-              <p className="text-slate-300 italic">
+              <p className="text-slate-300 italic leading-relaxed">
                 "Epistemic risks are mitigated through explicit framing, plural comparison, and documented uncertainty."
               </p>
             </div>
@@ -251,13 +257,13 @@ const App: React.FC = () => {
       <footer className="mt-auto border-t border-slate-800 bg-slate-950/80 backdrop-blur py-8 px-4 z-50">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-3">
-             <div className="w-6 h-6 bg-slate-800 rounded flex items-center justify-center font-bold text-xs">M</div>
+             <div className="w-6 h-6 bg-slate-800 rounded flex items-center justify-center font-bold text-xs text-white">M</div>
              <span className="text-sm text-slate-500">© 2024 MKone Framework. Ethics First.</span>
           </div>
           <div className="flex gap-6">
-            <a href="#" className="text-xs text-slate-500 hover:text-slate-300">Privacy</a>
-            <a href="#" className="text-xs text-slate-500 hover:text-slate-300">Security</a>
-            <a href="#" className="text-xs text-slate-500 hover:text-slate-300">Ethical Audit</a>
+            <a href="#" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">Privacy</a>
+            <a href="#" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">Security</a>
+            <a href="#" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">Ethical Audit</a>
           </div>
         </div>
       </footer>
