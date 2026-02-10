@@ -47,13 +47,13 @@ const App: React.FC = () => {
             className="flex items-center gap-3 cursor-pointer group"
             onClick={() => setView(ViewState.HOME)}
           >
-            <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center font-bold text-white group-hover:scale-110 transition-transform">M</div>
-            <span className="text-xl font-bold tracking-tighter">MK<span className="text-blue-500">one</span></span>
+            <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center font-bold text-white group-hover:scale-110 transition-transform">C</div>
+            <span className="text-xl font-bold tracking-[0.1em] uppercase">CIVILISATION<span className="text-blue-500">.ONE</span></span>
           </div>
 
           <div className="hidden md:flex items-center gap-4">
             <NavItem state={ViewState.HOME} label="Home" />
-            <NavItem state={ViewState.CIVILISATION} label="Civilisation One" />
+            <NavItem state={ViewState.CIVILISATION} label="Verification Layer" />
             <NavItem state={ViewState.PRINCIPLES} label="Principles" />
             <NavItem state={ViewState.RISKS} label="Risks" />
             <NavItem state={ViewState.EXPLORER} label="Explorer" />
@@ -77,7 +77,7 @@ const App: React.FC = () => {
         {mobileMenuOpen && (
           <div className="md:hidden bg-slate-950 border-b border-slate-800 py-4 flex flex-col items-center gap-2">
             <NavItem state={ViewState.HOME} label="Home" />
-            <NavItem state={ViewState.CIVILISATION} label="Civilisation One" />
+            <NavItem state={ViewState.CIVILISATION} label="Verification Layer" />
             <NavItem state={ViewState.PRINCIPLES} label="Principles" />
             <NavItem state={ViewState.RISKS} label="Risks" />
             <NavItem state={ViewState.EXPLORER} label="Explorer" />
@@ -91,13 +91,12 @@ const App: React.FC = () => {
           <div className="space-y-24 animate-in fade-in duration-700">
             {/* Hero */}
             <section className="text-center max-w-4xl mx-auto">
-              <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight text-white">
-                A World-Modeling <br />
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">Framework</span>
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight text-white uppercase">
+                Unity of <br />
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">Awareness & Technology</span>
               </h1>
               <p className="text-xl text-slate-400 mb-10 leading-relaxed max-w-2xl mx-auto">
-                MKone is an exploratory unifying framework spanning physics, information theory, cosmology, and cognition. 
-                Designed to generate insight, not authoritative truth.
+                Civilisation.one is an exploratory unifying framework for knowledge verification, spanning physics, information theory, and cognition.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <button 
@@ -137,7 +136,7 @@ const App: React.FC = () => {
             <section className="grid md:grid-cols-2 gap-12 items-center">
               <div className="p-8 bg-emerald-500/5 rounded-3xl border border-emerald-500/20">
                 <h3 className="text-2xl font-bold text-emerald-400 mb-6 flex items-center gap-3">
-                  <span className="w-2 h-8 bg-emerald-500 rounded-full" /> What MKone Is
+                  <span className="w-2 h-8 bg-emerald-500 rounded-full" /> What Civilisation.one Is
                 </h3>
                 <ul className="space-y-4">
                   {[
@@ -153,7 +152,7 @@ const App: React.FC = () => {
               </div>
               <div className="p-8 bg-rose-500/5 rounded-3xl border border-rose-500/20">
                 <h3 className="text-2xl font-bold text-rose-400 mb-6 flex items-center gap-3">
-                  <span className="w-2 h-8 bg-rose-500 rounded-full" /> What MKone Is Not
+                  <span className="w-2 h-8 bg-rose-500 rounded-full" /> What Civilisation.one Is Not
                 </h3>
                 <ul className="space-y-4">
                   {[
@@ -177,7 +176,7 @@ const App: React.FC = () => {
           <div className="max-w-5xl mx-auto space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-500">
              <div className="text-center">
               <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">Ethical Principles</h1>
-              <p className="text-slate-400 max-w-2xl mx-auto">MKone responsibility scales not with deployment size, but with interpretive influence.</p>
+              <p className="text-slate-400 max-w-2xl mx-auto">Civilisation.one responsibility scales not with deployment size, but with interpretive influence.</p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -257,8 +256,8 @@ const App: React.FC = () => {
       <footer className="mt-auto border-t border-slate-800 bg-slate-950/80 backdrop-blur py-8 px-4 z-50">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-3">
-             <div className="w-6 h-6 bg-slate-800 rounded flex items-center justify-center font-bold text-xs text-white">M</div>
-             <span className="text-sm text-slate-500">© 2024 MKone Framework. Ethics First.</span>
+             <div className="w-6 h-6 bg-slate-800 rounded flex items-center justify-center font-bold text-xs text-white">C</div>
+             <span className="text-sm text-slate-500">© 2024 Civilisation.one. Ethics First.</span>
           </div>
           <div className="flex gap-6">
             <a href="#" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">Privacy</a>

@@ -8,12 +8,12 @@ export const generateMKoneHypothesis = async (query: string): Promise<MKoneHypot
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `Generate a theoretical hypothesis within the MKone world-modeling framework for the following domain: ${query}. 
-      Remember: MKone is a unifying framework spanning physics, information theory, and cognition. 
+      contents: `Generate a theoretical hypothesis within the Civilisation.one world-modeling framework for the following domain: ${query}. 
+      Remember: Civilisation.one is a unifying framework spanning physics, information theory, and cognition. 
       The output should be exploratory and labeled as a hypothesis. 
       For alternate perspectives, provide a 'weight' from 1-10 indicating its structural relevance to the core hypothesis.`,
       config: {
-        systemInstruction: "You are the MKone Core Interpreter. Your goal is to apply MKone's interdisciplinary lens to user queries. Always maintain a tone of humility and remind users that models are not reality.",
+        systemInstruction: "You are the Civilisation.one Core Interpreter. Your goal is to apply our interdisciplinary lens to user queries. Always maintain a tone of humility and remind users that models are not reality.",
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,

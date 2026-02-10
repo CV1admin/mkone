@@ -16,9 +16,15 @@ import { Principle, Risk } from './types';
 
 export const PRINCIPLES: Principle[] = [
   {
+    id: 'unity',
+    title: 'Unity of Awareness',
+    description: 'The intentional alignment of cognitive intent with computational advancement. Technology serves as a transparent extension of consciousness, ensuring that systems remain anchored in collective human awareness.',
+    icon: 'Cpu'
+  },
+  {
     id: 'agency',
     title: 'Agency First',
-    description: 'MKone preserves human agency. It does not decide, judge, or command. All interpretations and consequences remain human responsibility.',
+    description: 'Civilisation.one preserves human agency. It does not decide, judge, or command. All interpretations and consequences remain human responsibility.',
     icon: 'UserCheck'
   },
   {
@@ -36,12 +42,12 @@ export const PRINCIPLES: Principle[] = [
   {
     id: 'pluralism',
     title: 'Pluralism by Design',
-    description: 'MKone is one lens among many. It is used alongside, not instead of, competing theories and frameworks.',
+    description: 'Civilisation.one is one lens among many. It is used alongside, not instead of, competing theories and frameworks.',
     icon: 'Globe'
   },
   {
     id: 'responsibility',
-    title: 'Scaled Responsibility',
+    title: 'Responsibility',
     description: 'As influence, automation, or authority grows, so does the ethical responsibility of the user.',
     icon: 'Scale'
   }

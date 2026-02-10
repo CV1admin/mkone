@@ -1,6 +1,6 @@
 {
-  "name": "MKone - Ethical Explorer",
-  "description": "An interactive digital interface for the MKone world-modeling framework, presenting its ethical README and conceptual explorations with high-fidelity visualizations.",
+  "name": "Civilisation.One",
+  "description": "Civilisation.One is a scientific verification and simulation platform designed to enable paradox-aware computation, collective hypothesis testing, and ethically aligned artificial intelligence.",
   "requestFramePermissions": [
     "camera"
   ]

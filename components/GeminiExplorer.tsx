@@ -204,7 +204,6 @@ const GeminiExplorer: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      // Use the synthesis depth as thinking budget for gemini-3-flash-preview
       const hypothesis = await generateMKoneHypothesis(searchQuery);
       if (hypothesis) {
         setActiveResult(hypothesis);
@@ -234,7 +233,7 @@ const GeminiExplorer: React.FC = () => {
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
       const dataToCompare = comparisonQueries.map(q => resultsCache[q]).filter(Boolean);
-      const prompt = `Synthesize a meta-hypothesis by analyzing the relationship between these MKone domains: ${comparisonQueries.join(', ')}. 
+      const prompt = `Synthesize a meta-hypothesis by analyzing the relationship between these Civilisation.one domains: ${comparisonQueries.join(', ')}. 
       Focus on their shared isomorphic structures. Data: ${JSON.stringify(dataToCompare)}.`;
       
       const response = await ai.models.generateContent({
@@ -497,9 +496,9 @@ const GeminiExplorer: React.FC = () => {
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-600/10 border border-blue-500/20 rounded-full text-blue-400 text-[10px] font-mono uppercase tracking-[0.2em] mb-4">
           Framework Version 2.4.1
         </div>
-        <h2 className="text-4xl md:text-5xl font-bold mb-3 flex items-center justify-center gap-4 text-white">
+        <h2 className="text-4xl md:text-5xl font-bold mb-3 flex items-center justify-center gap-4 text-white uppercase tracking-wider">
           <Sparkles className="text-blue-500 w-10 h-10" />
-          MKone Explorer
+          Civilisation.one Explorer
         </h2>
         <p className="text-slate-400 max-w-lg mx-auto text-sm md:text-base leading-relaxed">
           The interdisciplinary engine for generating structural isomorphisms across fragmented scientific domains.
@@ -593,7 +592,7 @@ const GeminiExplorer: React.FC = () => {
         <div className="animate-in fade-in zoom-in-95 duration-500 space-y-10">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-slate-950/40 p-8 rounded-[2rem] border border-slate-800/60">
                 <div className="space-y-1">
-                  <h3 className="text-2xl font-bold flex items-center gap-3 text-blue-400">
+                  <h3 className="text-2xl font-bold flex items-center gap-3 text-blue-400 uppercase tracking-wide">
                       <Scale className="w-6 h-6" /> Comparative Analysis Suite
                   </h3>
                   <p className="text-slate-500 text-sm font-medium">Cross-referencing structural mechanisms across {comparisonQueries.length} selected domains.</p>
@@ -667,7 +666,7 @@ const GeminiExplorer: React.FC = () => {
             <div className="space-y-1">
                 <h4 className="font-bold text-amber-500 uppercase text-xs tracking-widest font-mono">Epistemic Disclaimer</h4>
                 <p className="text-amber-200/80 text-sm leading-relaxed max-w-2xl">
-                    MKone hypotheses are emergent computational patterns derived from information-theoretic isomorphisms. They represent potential structural alignments, not empirical verities.
+                    Civilisation.one hypotheses are emergent computational patterns derived from information-theoretic isomorphisms. They represent potential structural alignments, not empirical verities.
                 </p>
             </div>
         </div>
