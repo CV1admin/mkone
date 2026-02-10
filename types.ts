@@ -11,6 +11,13 @@ export interface Risk {
   definition: string;
 }
 
+export interface Statement {
+  id: number;
+  title: string;
+  content: string;
+  icon: string;
+}
+
 export interface MKoneHypothesis {
   domain: string;
   coherencePattern: string;
@@ -25,5 +32,6 @@ export enum ViewState {
   PRINCIPLES = 'principles',
   EXPLORER = 'explorer',
   RISKS = 'risks',
-  CIVILISATION = 'civilisation'
+  CIVILISATION = 'civilisation',
+  STATEMENTS = 'statements'
 }
