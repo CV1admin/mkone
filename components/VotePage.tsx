@@ -11,7 +11,9 @@ import {
   Gavel,
   ShieldCheck,
   ChevronRight,
-  X
+  X,
+  FileCode,
+  Table
 } from 'lucide-react';
 
 interface Proposal {
@@ -79,7 +81,6 @@ const VotePage: React.FC = () => {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      // Explicitly typing 'f' as File to avoid the unknown property access error.
       const newFiles = Array.from(files).map((f: File) => ({ name: f.name, type: f.type }));
       setUploadedFiles(prev => [...prev, ...newFiles]);
     }
@@ -87,6 +88,13 @@ const VotePage: React.FC = () => {
 
   const removeFile = (index: number) => {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const getFileIcon = (fileName: string) => {
+    const ext = fileName.split('.').pop()?.toLowerCase();
+    if (ext === 'csv') return <Table className="w-4 h-4 text-amber-500 shrink-0" />;
+    if (ext === 'html' || ext === 'htm') return <FileCode className="w-4 h-4 text-blue-400 shrink-0" />;
+    return <FileText className="w-4 h-4 text-emerald-500 shrink-0" />;
   };
 
   return (
@@ -190,7 +198,7 @@ const VotePage: React.FC = () => {
               <Upload className="w-5 h-5 text-emerald-500" /> Verification Docs
             </h2>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Upload scientific reviews, peer critiques, or model validation logs to support or contest active proposals.
+              Upload scientific reviews, peer critiques, dataset exports, or model validation logs. We support HTML, CSV, PDF, and technical archives.
             </p>
 
             <div 
@@ -201,7 +209,7 @@ const VotePage: React.FC = () => {
                 <FileText className="w-6 h-6 text-slate-600 group-hover:text-emerald-500" />
               </div>
               <span className="text-xs font-bold text-slate-500 group-hover:text-slate-300">Drag & Drop or click to browse</span>
-              <span className="text-[9px] text-slate-600 font-mono uppercase tracking-widest">PDF, DOCX, ZIP (MAX 25MB)</span>
+              <span className="text-[9px] text-slate-600 font-mono uppercase tracking-widest">HTML, CSV, PDF, ZIP (MAX 25MB)</span>
               <input 
                 type="file" 
                 ref={fileInputRef} 
@@ -217,7 +225,7 @@ const VotePage: React.FC = () => {
                 {uploadedFiles.map((file, i) => (
                   <div key={i} className="flex items-center justify-between p-3 bg-slate-950 rounded-xl border border-slate-800 group/file">
                     <div className="flex items-center gap-3 truncate">
-                      <FileText className="w-4 h-4 text-emerald-500 shrink-0" />
+                      {getFileIcon(file.name)}
                       <span className="text-xs text-slate-300 truncate font-mono">{file.name}</span>
                     </div>
                     <button onClick={() => removeFile(i)} className="p-1 hover:text-rose-500 transition-colors">

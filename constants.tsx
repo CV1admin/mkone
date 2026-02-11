@@ -17,7 +17,15 @@ import {
   Users,
   Trees,
   MailOpen,
-  LucideIcon
+  LucideIcon,
+  Zap,
+  Radio,
+  Microscope,
+  Waves,
+  Atom,
+  Database,
+  BarChart3,
+  GitMerge
 } from 'lucide-react';
 import { Principle, Risk, Statement } from './types';
 
@@ -57,6 +65,43 @@ export const PRINCIPLES: Principle[] = [
     title: 'Responsibility',
     description: 'As influence, automation, or authority grows, so does the ethical responsibility of the user.',
     icon: 'Scale'
+  }
+];
+
+export const DATA_MAPPINGS = [
+  {
+    layer: 'Φ (Structural)',
+    concept: 'Vacuum Equilibrium & Curvature',
+    datasets: [
+      { name: 'Planck CMB', source: 'ESA', metric: 'C_ℓ Anisotropy Spectrum' },
+      { name: 'LIGO Strain', source: 'Caltech/MIT', metric: 'Curvature Echo h(t)' }
+    ],
+    color: 'blue'
+  },
+  {
+    layer: 'ψ (Dynamic)',
+    concept: 'Holonomy & Symmetry Flow',
+    datasets: [
+      { name: 'LHC Collisions', source: 'CERN', metric: 'Higgs VEV / Gauge Flow' },
+      { name: 'IBM Q Calibration', source: 'IBM', metric: 'Floquet Eigenphase' }
+    ],
+    color: 'emerald'
+  },
+  {
+    layer: 'Ω (Paradox)',
+    concept: 'Correlation Tension',
+    datasets: [
+      { name: 'Entanglement Data', source: 'Various Labs', metric: 'CHSH Violation / Entropy' }
+    ],
+    color: 'purple'
+  },
+  {
+    layer: 'Δ (Alignment)',
+    concept: 'Information Geometry',
+    datasets: [
+      { name: 'SDSS Surveys', source: 'Sloan', metric: 'Fisher Info / Cosmic Web' }
+    ],
+    color: 'amber'
   }
 ];
 
@@ -159,5 +204,13 @@ export const ICON_MAP: Record<string, LucideIcon> = {
   FlaskConical,
   Users,
   Trees,
-  MailOpen
+  MailOpen,
+  Zap,
+  Radio,
+  Microscope,
+  Waves,
+  Atom,
+  Database,
+  BarChart3,
+  GitMerge
 };

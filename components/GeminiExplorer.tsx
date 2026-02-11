@@ -32,7 +32,9 @@ import {
   Wand2,
   ChevronRight,
   BrainCircuit,
-  Settings
+  Settings,
+  Database,
+  Radio
 } from 'lucide-react';
 
 const CONCEPTUAL_ANCHORS = [
@@ -47,14 +49,20 @@ const CONCEPTUAL_ANCHORS = [
   { label: 'Tension', category: 'Structural', desc: 'Balance of opposing forces.' },
   { label: 'Quanta', category: 'Physics', desc: 'Discrete units of energy or information.' },
   { label: 'Fractal', category: 'Math', desc: 'Self-similar patterns across scales.' },
-  { label: 'Feedback', category: 'Cybernetics', desc: 'Circular causality in system control.' }
+  { label: 'Feedback', category: 'Cybernetics', desc: 'Circular causality in system control.' },
+  // Data Grounding Anchors
+  { label: 'Planck CMB', category: 'Grounding', desc: 'Ground query in Cosmic Microwave Background data.' },
+  { label: 'LIGO Strain', category: 'Grounding', desc: 'Bind hypothesis to gravitational wave observations.' },
+  { label: 'LHC Higgs', category: 'Grounding', desc: 'Ground in CERN collision measurements.' },
+  { label: 'IBM Q Floquet', category: 'Grounding', desc: 'Verify via quantum hardware eigenphase.' }
 ];
 
 const TEMPLATES = [
   { name: 'Bridge Analysis', template: 'Analyze the structural isomorphism between [Domain A] and [Domain B] through the lens of [Anchor].', type: 'Comparison' },
   { name: 'Mechanism Deep-Dive', template: 'Map the underlying mechanical architecture of [Domain] using [Anchor] as a primary metric.', type: 'Exploration' },
   { name: 'Recursive Decay', template: 'Trace the entropic decay and recursive feedback loops inherent in the [Domain] system.', type: 'Dynamics' },
-  { name: 'Systemic Stability', template: 'Assess the autopoietic limits and homeostasis of [Domain] within a high-entropy environment.', type: 'Systems' }
+  { name: 'Systemic Stability', template: 'Assess the autopoietic limits and homeostasis of [Domain] within a high-entropy environment.', type: 'Systems' },
+  { name: 'Data Grounded Predictor', template: 'Generate a falsifiable prediction for [Domain] using [Grounding Anchor] constraints.', type: 'Scientific v2' }
 ];
 
 const InteractivePerspectiveGraph: React.FC<{ 
@@ -209,7 +217,6 @@ const GeminiExplorer: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      // Passing synthesisDepth as thinkingBudget to the service
       const hypothesis = await generateMKoneHypothesis(searchQuery, synthesisDepth);
       if (hypothesis) {
         setActiveResult(hypothesis);
@@ -237,7 +244,6 @@ const GeminiExplorer: React.FC = () => {
     if (!query.trim()) return;
     setPolishing(true);
     try {
-      // Create fresh instance right before call
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const prompt = `Refine this modeling query into a highly sophisticated Civilisation.one structural analysis prompt. Keep it concise but use multidisciplinary terminology from physics, complexity science, and information theory. Original: "${query}"`;
       
@@ -245,7 +251,6 @@ const GeminiExplorer: React.FC = () => {
         model: 'gemini-3-flash-preview',
         contents: prompt
       });
-      // response.text is a property
       if (response.text) {
         setQuery(response.text.replace(/^["']|["']$/g, '').trim());
       }
@@ -260,7 +265,6 @@ const GeminiExplorer: React.FC = () => {
     if (comparisonQueries.length < 2) return;
     setAnalyzingComparison(true);
     try {
-      // Create fresh instance right before call
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const dataToCompare = comparisonQueries.map(q => resultsCache[q]).filter(Boolean);
       const prompt = `Synthesize a meta-hypothesis by analyzing the relationship between these Civilisation.one domains: ${comparisonQueries.join(', ')}. 
@@ -270,7 +274,6 @@ const GeminiExplorer: React.FC = () => {
         model: 'gemini-3-flash-preview',
         contents: prompt
       });
-      // Accessing property directly
       setComparativeAnalysis(response.text || "Unable to generate analysis.");
     } catch (err) {
       setComparativeAnalysis("Error generating comparative synthesis.");
@@ -447,8 +450,11 @@ const GeminiExplorer: React.FC = () => {
                                         onClick={() => injectAnchor(anchor.label)}
                                         className="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl text-left hover:border-blue-500/40 hover:bg-blue-500/5 transition-all group relative"
                                     >
-                                        <div className="text-xs font-bold text-slate-100 group-hover:text-blue-400">{anchor.label}</div>
-                                        <div className="text-[10px] text-slate-500 truncate">{anchor.desc}</div>
+                                        <div className="flex items-center gap-2">
+                                          {anchor.category === 'Grounding' ? <Database className="w-3 h-3 text-blue-400" /> : <Hash className="w-3 h-3 text-slate-600" />}
+                                          <div className="text-xs font-bold text-slate-100 group-hover:text-blue-400">{anchor.label}</div>
+                                        </div>
+                                        <div className="text-[10px] text-slate-500 truncate mt-1">{anchor.desc}</div>
                                         <Plus className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-700 opacity-0 group-hover:opacity-100 transition-opacity" />
                                     </button>
                                 ))}
@@ -544,7 +550,7 @@ const GeminiExplorer: React.FC = () => {
           <Sparkles className="text-blue-500 w-10 h-10" />
           Civilisation.one Explorer
         </h2>
-        <p className="text-slate-400 max-w-lg mx-auto text-sm md:text-base leading-relaxed">
+        <p className="text-slate-400 max-lg mx-auto text-sm md:text-base leading-relaxed">
           The interdisciplinary engine for generating structural isomorphisms across fragmented scientific domains.
         </p>
         

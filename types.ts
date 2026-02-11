@@ -34,5 +34,6 @@ export enum ViewState {
   RISKS = 'risks',
   CIVILISATION = 'civilisation',
   STATEMENTS = 'statements',
-  VOTE = 'vote'
+  VOTE = 'vote',
+  ENGINE = 'engine'
 }

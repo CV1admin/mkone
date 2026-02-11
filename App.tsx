@@ -7,6 +7,7 @@ import GeminiExplorer from './components/GeminiExplorer';
 import VerificationLayer from './components/VerificationLayer';
 import Statements from './components/Statements';
 import VotePage from './components/VotePage';
+import ScientificEngine from './components/ScientificEngine';
 import { 
   Menu, 
   X, 
@@ -19,7 +20,8 @@ import {
   Cpu,
   Layers,
   FileText,
-  Vote
+  Vote,
+  Microscope
 } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -59,6 +61,7 @@ const App: React.FC = () => {
             <NavItem state={ViewState.HOME} label="Home" />
             <NavItem state={ViewState.CIVILISATION} label="Verification Layer" />
             <NavItem state={ViewState.STATEMENTS} label="Statements" />
+            <NavItem state={ViewState.ENGINE} label="Scientific Engine" />
             <NavItem state={ViewState.PRINCIPLES} label="Principles" />
             <NavItem state={ViewState.RISKS} label="Risks" />
             <NavItem state={ViewState.VOTE} label="Vote" />
@@ -85,6 +88,7 @@ const App: React.FC = () => {
             <NavItem state={ViewState.HOME} label="Home" />
             <NavItem state={ViewState.CIVILISATION} label="Verification Layer" />
             <NavItem state={ViewState.STATEMENTS} label="Statements" />
+            <NavItem state={ViewState.ENGINE} label="Scientific Engine" />
             <NavItem state={ViewState.PRINCIPLES} label="Principles" />
             <NavItem state={ViewState.RISKS} label="Risks" />
             <NavItem state={ViewState.VOTE} label="Vote" />
@@ -94,30 +98,30 @@ const App: React.FC = () => {
       </nav>
 
       {/* Main Content Area */}
-      <main className={`flex-1 z-10 relative ${view === ViewState.CIVILISATION || view === ViewState.STATEMENTS || view === ViewState.VOTE ? 'pt-4' : 'pt-12'} pb-24 px-4 max-w-7xl mx-auto w-full`}>
+      <main className={`flex-1 z-10 relative ${view === ViewState.CIVILISATION || view === ViewState.STATEMENTS || view === ViewState.VOTE || view === ViewState.ENGINE ? 'pt-4' : 'pt-12'} pb-24 px-4 max-w-7xl mx-auto w-full`}>
         {view === ViewState.HOME && (
           <div className="space-y-24 animate-in fade-in duration-700">
             {/* Hero */}
             <section className="text-center max-w-4xl mx-auto">
-              <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight text-white uppercase">
-                Unity of <br />
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">Awareness & Technology</span>
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight text-white uppercase text-balance">
+                The Verification Layer <br />
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">for Verified Knowledge</span>
               </h1>
               <p className="text-xl text-slate-400 mb-10 leading-relaxed max-w-2xl mx-auto">
-                Civilisation.one is an exploratory unifying framework for knowledge verification, spanning physics, information theory, and cognition.
+                Grounding symbolic theory in measurable physical reality. Civilisation.one integrates Planck, LIGO, and CERN datasets to verify the unity of awareness.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <button 
-                  onClick={() => setView(ViewState.EXPLORER)}
+                  onClick={() => setView(ViewState.ENGINE)}
                   className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-full transition-all flex items-center gap-2 group shadow-xl shadow-blue-900/20"
                 >
-                  Launch Explorer <ChevronRight className="group-hover:translate-x-1 transition-transform" />
+                  <Microscope className="w-5 h-5" /> Enter Data Lab <ChevronRight className="group-hover:translate-x-1 transition-transform" />
                 </button>
                 <button 
-                   onClick={() => setView(ViewState.VOTE)}
+                   onClick={() => setView(ViewState.EXPLORER)}
                   className="px-8 py-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-full transition-all flex items-center gap-2"
                 >
-                  <Vote className="w-4 h-4 text-emerald-400" /> Enter Governance
+                  Launch Explorer
                 </button>
               </div>
             </section>
@@ -125,9 +129,9 @@ const App: React.FC = () => {
             {/* Definitions */}
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { title: "Theoretic Framework", desc: "Spanning physics, information theory, cosmology, and cognition.", icon: Orbit },
+                { title: "Scientific v2 Engine", desc: "Linked to real-world datasets from ESA, CERN, and IBM Q.", icon: Microscope },
                 { title: "Computational Paradigm", desc: "Utilizing tensor networks, quantum circuits, and machine learning.", icon: Cpu },
-                { title: "Exploratory Model", desc: "Designed to generate insights and hypotheses, not final facts.", icon: Lightbulb }
+                { title: "Falsifiable Models", desc: "Designed to generate measurable predictions, not final facts.", icon: Lightbulb }
               ].map((item, idx) => {
                 const Icon = item.icon;
                 return (
@@ -148,9 +152,9 @@ const App: React.FC = () => {
                 </h3>
                 <ul className="space-y-4">
                   {[
-                    "A conceptual sandbox for interdisciplinary reasoning.",
-                    "A tool for exploring coherence across fragmented domains.",
-                    "An engine for generating structural hypotheses."
+                    "A data-linked computational verification platform.",
+                    "An engine for grounded structural analysis.",
+                    "A falsifiable laboratory for interdisciplinary synthesis."
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3 text-slate-300">
                       <ArrowRight className="w-5 h-5 mt-1 text-emerald-500 shrink-0" /> {item}
@@ -165,8 +169,8 @@ const App: React.FC = () => {
                 <ul className="space-y-4">
                   {[
                     "A verified Theory of Everything.",
-                    "A predictive oracle or ground truth.",
-                    "A replacement for empirical science or values."
+                    "A symbolic oracle without empirical constraint.",
+                    "A replacement for verified datasets."
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3 text-slate-300">
                       <X className="w-5 h-5 mt-1 text-rose-500 shrink-0" /> {item}
@@ -181,6 +185,7 @@ const App: React.FC = () => {
         {view === ViewState.CIVILISATION && <VerificationLayer />}
         {view === ViewState.STATEMENTS && <Statements />}
         {view === ViewState.VOTE && <VotePage />}
+        {view === ViewState.ENGINE && <ScientificEngine />}
 
         {view === ViewState.PRINCIPLES && (
           <div className="max-w-5xl mx-auto space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-500">
@@ -267,7 +272,7 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-3">
              <div className="w-6 h-6 bg-slate-800 rounded flex items-center justify-center font-bold text-xs text-white">C</div>
-             <span className="text-sm text-slate-500">© 2024 Civilisation.one. Ethics First.</span>
+             <span className="text-sm text-slate-500">© 2024 Civilisation.one. Data Driven.</span>
           </div>
           <div className="flex gap-6">
             <a href="#" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">Privacy</a>
